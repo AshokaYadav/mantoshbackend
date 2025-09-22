@@ -1,22 +1,20 @@
-const http = require('http');
+const express = require('express');
+const cors = require('cors');
 
-const server = http.createServer((req, res) => {
-  if (req.url === '/users' && req.method === 'GET') {
-    const users = [
-      { id: 1, name: 'Alice', age: 25 },
-      { id: 2, name: 'Bob', age: 30 },
-      { id: 3, name: 'Charlie', age: 22 },
-    ];
+const app = express();
 
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(users));
-  } else {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('Hello Node.js!');
-  }
+// 🔹 Allow all origins
+app.use(cors());
+
+app.get('/users', (req, res) => {
+  const users = [
+    { id: 1, name: 'lice', age: 25 },
+    { id: 2, name: 'Bb', age: 30 },
+    { id: 3, name: 'Charlie', age: 22 },
+  ];
+  res.json(users);
 });
 
-const PORT = 4000;
-server.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// Use dynamic port for Render
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
