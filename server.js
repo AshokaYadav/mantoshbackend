@@ -1,17 +1,21 @@
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2');
+const dotenv=require('dotenv')
 
 const app = express();
 app.use(cors());
 app.use(express.json()); // For parsing JSON body
 
 // ✅ MySQL Connection (XAMPP ke sath)
+dotenv.config(); // ✅ env file load karega
+
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',       // XAMPP ka default user
-  password: '',       // Default me blank hota hai
-  database: 'mantosh_backend', // Apna DB name likhna
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
 });
 
 // Test connection
@@ -21,8 +25,28 @@ db.connect((err) => {
     return;
   }
   console.log('✅ Connected to MySQL database');
+   const createTableQuery = `
+    CREATE TABLE IF NOT EXISTS mantosh (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(100),
+      age INT
+    )
+  `;
+
+  db.query(createTableQuery, (err, result) => {
+    if (err) {
+      console.error("❌ Error creating table:", err);
+    } else {
+      console.log("✅ Members table ready!");
+    }
+  });
 });
 
+
+
+app.get('/',(req,resp)=>{
+  resp.json("ok")
+})
 // 🔹 Get users from DB
 app.get('/users', (req, res) => {
   const query = 'SELECT * FROM mantosh'; // Apna table name yaha likhna
